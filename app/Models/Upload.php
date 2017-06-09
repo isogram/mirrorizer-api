@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;;
+
+class Upload extends Model
+{
+
+    protected $table = 'uploads';
+
+    protected $casts = [
+        'member_id'     => 'integer',
+        'directory_id'  => 'integer',
+    ];
+
+    protected $perPage = 100;
+
+    public function member()
+    {
+        return $this->belongsTo('App\Models\Member', 'member_id');
+    }
+
+    public function directory()
+    {
+        return $this->belongsTo('App\Models\Directory', 'directory_id');
+    }
+
+    public function links()
+    {
+        return $this->hasMany('App\Models\Link', 'upload_id');
+    }
+
+}

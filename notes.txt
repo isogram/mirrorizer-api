@@ -1,0 +1,105 @@
+# -------------------------
+# Dropbox Success Response
+# -------------------------
+{
+    "error": null,
+    "data": {
+        "name": "file.jpg",
+        "path_lower": "/uploaded/file.jpg",
+        "path_display": "/UPLOADED/file.jpg",
+        "id": "id:B56VYtI6hBAAAAAAAAAAEg",
+        "client_modified": "2017-04-20T10:42:15Z",
+        "server_modified": "2017-04-20T10:42:16Z",
+        "rev": "205603a328",
+        "size": 170695,
+        "content_hash": "5dc1c9c81067a63b4bf83aa609e0a594ae1cb28549a0ff06d108c4f541a86ef1"
+    },
+    "permission": {
+        ".tag": "file",
+        "url": "https://www.dropbox.com/s/jrw1rpxn2cv24tj/file.jpg?dl=0",
+        "id": "id:B56VYtI6hBAAAAAAAAAAEg",
+        "name": "file.jpg",
+        "path_lower": "/uploaded/file.jpg",
+        "link_permissions": {
+            "resolved_visibility": {
+                ".tag": "public"
+            },
+            "requested_visibility": {
+                ".tag": "public"
+            },
+            "can_revoke": true
+        },
+        "client_modified": "2017-04-20T10:42:15Z",
+        "server_modified": "2017-04-20T10:42:16Z",
+        "rev": "205603a328",
+        "size": 170695
+    }
+}
+
+# -----------------------------
+# Google Drive Success Response
+# -----------------------------
+{
+    "error": null,
+    "data": {
+        "appProperties": null,
+        "createdTime": null,
+        "description": null,
+        "explicitlyTrashed": null,
+        "fileExtension": null,
+        "folderColorRgb": null,
+        "fullFileExtension": null,
+        "hasAugmentedPermissions": null,
+        "hasThumbnail": null,
+        "headRevisionId": null,
+        "iconLink": null,
+        "id": "0BxzXl76nV9ktdnIxT3loSS0yQkE",
+        "isAppAuthorized": null,
+        "kind": "drive#file",
+        "md5Checksum": null,
+        "mimeType": "image/jpeg",
+        "modifiedByMe": null,
+        "modifiedByMeTime": null,
+        "modifiedTime": null,
+        "name": "file.jpg",
+        "originalFilename": null,
+        "ownedByMe": null,
+        "parents": null,
+        "properties": null,
+        "quotaBytesUsed": null,
+        "shared": null,
+        "sharedWithMeTime": null,
+        "size": null,
+        "spaces": null,
+        "starred": null,
+        "teamDriveId": null,
+        "thumbnailLink": null,
+        "thumbnailVersion": null,
+        "trashed": null,
+        "trashedTime": null,
+        "version": null,
+        "viewedByMe": null,
+        "viewedByMeTime": null,
+        "viewersCanCopyContent": null,
+        "webContentLink": null,
+        "webViewLink": null,
+        "writersCanShare": null
+    },
+    "permission": {
+        "allowFileDiscovery": false,
+        "displayName": null,
+        "domain": null,
+        "emailAddress": null,
+        "expirationTime": null,
+        "id": "anyoneWithLink",
+        "kind": "drive#permission",
+        "photoLink": null,
+        "role": "reader",
+        "type": "anyone"
+    }
+}
+
+# -----------------------------
+# Google Drive Direct Download
+# -----------------------------
+https://drive.google.com/uc?id=FILE_ID
