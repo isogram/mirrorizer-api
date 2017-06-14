@@ -36,7 +36,11 @@ class Onedrive
         if (!isset($_GET['code'])) {
 
             // If we don't have an authorization code then get one
-            $authUrl = $provider->getAuthorizationUrl();
+            $options = [
+                'response_type' => 'token',
+                'scope'         => 'files.readwrite',
+            ];
+            $authUrl = $provider->getAuthorizationUrl($options);
             // dd($authUrl);
             $_SESSION['oauth2state'] = $provider->getState();
             header('Location: '.$authUrl);
@@ -50,28 +54,8 @@ class Onedrive
 
         } else {
 
-            // Try to get an access token (using the authorization code grant)
-            $token = $provider->getAccessToken('authorization_code', [
-                'code' => $_GET['code']
-            ]);
+            return $request->all();
 
-            // Optional: Now you have a token you can look up a users profile data
-            try {
-
-                // We got an access token, let's now get the user's details
-                $user = $provider->getResourceOwner($token);
-
-                // Use these details to create a new profile
-                printf('Hello %s!', $user->getFirstname());
-
-            } catch (Exception $e) {
-
-                // Failed to get user details
-                exit('Oh dear...');
-            }
-
-            // Use this to interact with an API on the users behalf
-            return $token->getToken();
         }
 
     }
