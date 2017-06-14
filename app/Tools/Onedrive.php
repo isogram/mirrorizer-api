@@ -4,8 +4,6 @@ namespace App\Tools;
 
 use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
 
-use Illuminate\Http\Request;
-
 /**
 * Onedrive Class
 */
