@@ -4,8 +4,6 @@ namespace App\Tools;
 
 use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
 
-use Illuminate\Http\Request;
-
 /**
 * Onedrive Class
 */
@@ -16,6 +14,7 @@ class Onedrive
     protected $appSecret;
     protected $app;
     protected $redirectUri;
+    protected $redirectUriLogout;
 
     const DROPBOX_PATH = '/UPLOADED';
 
@@ -24,6 +23,7 @@ class Onedrive
         $this->appKey = config('mirrorizer.onedrive_app_key');
         $this->appSecret = config('mirrorizer.onedrive_app_secret');
         $this->redirectUri = config('mirrorizer.onedrive_redirect_uri');
+        $this->redirectUriLogout = config('mirrorizer.onedrive_redirect_uri_logout');
     }
 
     public function generateCredentials(Request $request)
@@ -38,14 +38,10 @@ class Onedrive
         if (!isset($_GET['code'])) {
 
             // If we don't have an authorization code then get one
-            $options = [
-                'response_type' => 'token',
-                'scope'         => 'files.readwrite',
-            ];
-            $authUrl = $provider->getAuthorizationUrl($options);
+            $authUrl = $provider->getAuthorizationUrl();
             // dd($authUrl);
             $_SESSION['oauth2state'] = $provider->getState();
-            header('Location: '.$authUrl);
+            header('Location: '. $authUrl);
             exit;
 
         // Check given state against previously stored one to mitigate CSRF attack
@@ -56,10 +52,35 @@ class Onedrive
 
         } else {
 
-            return $request->all();
+            // // Try to get an access token (using the authorization code grant)
+            // $token = $provider->getAccessToken('authorization_code', [
+            //     'code' => $_GET['code']
+            // ]);
 
+            // // Optional: Now you have a token you can look up a users profile data
+            // try {
+
+            //     // We got an access token, let's now get the user's details
+            //     $user = $provider->getResourceOwner($token);
+
+            //     // Use these details to create a new profile
+            //     printf('Hello %s!', $user->getFirstname());
+
+            // } catch (Exception $e) {
+
+            //     // Failed to get user details
+            //     exit('Oh dear...');
+            // }
+
+            // Use this to interact with an API on the users behalf
+            return $request->all();
         }
 
+    }
+
+    public function logout()
+    {
+        # code...
     }
 
     // /**
