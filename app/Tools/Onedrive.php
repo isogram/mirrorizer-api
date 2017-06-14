@@ -40,7 +40,7 @@ class Onedrive
 
             // If we don't have an authorization code then get one
             $options = [
-                'scope' => ['files.readwrite.all', 'offline_access'], // array or string,
+                'scope' => 'files.readwrite.all offline_access',
                 'response_type' => 'token'
             ];
 
