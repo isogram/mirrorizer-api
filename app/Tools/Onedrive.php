@@ -4,6 +4,8 @@ namespace App\Tools;
 
 use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
 
+use Illuminate\Http\Request;
+
 /**
 * Onedrive Class
 */
@@ -24,7 +26,7 @@ class Onedrive
         $this->redirectUri = config('mirrorizer.onedrive_redirect_uri');
     }
 
-    public function generateCredentials()
+    public function generateCredentials(Request $request)
     {
 
         $provider = new Microsoft([
