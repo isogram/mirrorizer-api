@@ -22,5 +22,5 @@ return [
 
     'onedrive_app_key'             => env('ONEDRIVE_APP_KEY', '4746b654-3587-474d-a4cb-f27d18e7d46a'),
     'onedrive_app_secret'          => env('ONEDRIVE_APP_SECRET', '8FBC6EBBC77DF36F4DD6E744D9C4811FA4E36552'),
-    'onedrive_redirect_uri'        => env('ONEDRIVE_REDIRECT_URI', 'https://login.live.com/oauth20_desktop.srf'),
+    'onedrive_redirect_uri'        => env('ONEDRIVE_REDIRECT_URI', 'https://isogram.tk:8092/auth/microsoft'),
 ];

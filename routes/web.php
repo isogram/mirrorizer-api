@@ -57,6 +57,12 @@ $app->group(['prefix' => 'sample'], function() use ($app) {
 
 });
 
+$app->group(['prefix' => 'auth'], function () use ($app) {
+
+    $app->get('microsoft', 'AuthController@getMicrosoftAuth');
+
+});
+
 // members
 $app->group(['prefix' => 'members'], function () use ($app) {
 
