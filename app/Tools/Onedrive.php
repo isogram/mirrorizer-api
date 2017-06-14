@@ -31,6 +31,9 @@ class Onedrive
             'clientId'          => $this->appKey,
             'clientSecret'      => $this->appSecret,
             'redirectUri'       => $this->redirectUri,
+
+            'urlAuthorize'      => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+            'urlAccessToken'    => 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
         ]);
 
         if (!isset($_GET['code'])) {
@@ -76,7 +79,8 @@ class Onedrive
             }
 
             // Use this to interact with an API on the users behalf
-            return $token->getToken();
+            echo $token->getToken();
+            exit;
         }
 
     }
