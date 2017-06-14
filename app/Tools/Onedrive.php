@@ -30,13 +30,18 @@ class Onedrive
         $provider = new Microsoft([
             'clientId'          => $this->appKey,
             'clientSecret'      => $this->appSecret,
-            'redirectUri'       => $this->redirectUri
+            'redirectUri'       => $this->redirectUri,
         ]);
 
         if (!isset($_GET['code'])) {
 
             // If we don't have an authorization code then get one
-            $authUrl = $provider->getAuthorizationUrl();
+            $options = [
+                'scope' => ['files.readwrite.all', 'offline_access'], // array or string,
+                'response_type' => 'token'
+            ];
+
+            $authUrl = $provider->getAuthorizationUrl($options);
             // dd($authUrl);
             $_SESSION['oauth2state'] = $provider->getState();
             header('Location: '.$authUrl);
@@ -71,7 +76,7 @@ class Onedrive
             }
 
             // Use this to interact with an API on the users behalf
-            echo $token->getToken();
+            return $token->getToken();
         }
 
     }

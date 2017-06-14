@@ -30,6 +30,7 @@ class AuthController extends Controller
     {
         $onedrive = new Onedrive;
         $creds = $onedrive->generateCredentials();
-        dd($creds);
+
+        return $creds;
     }
 }
