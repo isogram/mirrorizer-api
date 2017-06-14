@@ -29,7 +29,7 @@ class AuthController extends Controller
     public function getMicrosoftAuth(Request $request)
     {
         $onedrive = new Onedrive;
-        $creds = $onedrive->generateCredentials();
+        $creds = $onedrive->generateCredentials($request);
 
         return $creds;
     }
