@@ -23,4 +23,5 @@ return [
     'onedrive_app_key'             => env('ONEDRIVE_APP_KEY', '8df43010-b4f9-4d38-a9d2-50483c821024'),
     'onedrive_app_secret'          => env('ONEDRIVE_APP_SECRET', 'tocnWCoAwOfFPrpqvnbVeEz'),
     'onedrive_redirect_uri'        => env('ONEDRIVE_REDIRECT_URI', 'https://isogram.tk:8092/auth/microsoft'),
+    'onedrive_credentials_path'    => __DIR__ . '/microsoft/credentials.json',
 ];

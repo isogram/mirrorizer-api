@@ -31,6 +31,11 @@ class AuthController extends Controller
         $onedrive = new Onedrive;
         $creds = $onedrive->generateCredentials($request);
 
-        return $creds;
+        if ($creds === true) {
+            return "Success";
+        } else {
+            return $creds;
+        }
+
     }
 }

@@ -17,6 +17,7 @@ class Onedrive
     protected $app;
     protected $redirectUri;
     protected $redirectUriLogout;
+    protected $credentialsPath;
 
     const DROPBOX_PATH = '/UPLOADED';
 
@@ -26,6 +27,7 @@ class Onedrive
         $this->appSecret = config('mirrorizer.onedrive_app_secret');
         $this->redirectUri = config('mirrorizer.onedrive_redirect_uri');
         $this->redirectUriLogout = config('mirrorizer.onedrive_redirect_uri_logout');
+        $this->credentialsPath = config('mirrorizer.onedrive_credentials_path');
     }
 
     public function generateCredentials(Request $request)
@@ -67,25 +69,18 @@ class Onedrive
                  'code' => $_GET['code']
             ]);
 
-            dd($token);
+            try {
 
-            // // Optional: Now you have a token you can look up a users profile data
-            // try {
+                file_put_contents($this->credentialsPath, json_encode($token));
 
-            //     // We got an access token, let's now get the user's details
-            //     $user = $provider->getResourceOwner($token);
+            } catch (Exception $e) {
 
-            //     // Use these details to create a new profile
-            //     printf('Hello %s!', $user->getFirstname());
+                return $e->getMessage();
 
-            // } catch (Exception $e) {
+            }
 
-            //     // Failed to get user details
-            //     exit('Oh dear...');
-            // }
+            return true;
 
-            // Use this to interact with an API on the users behalf
-            // return $request->all();
         }
 
     }
