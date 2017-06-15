@@ -34,13 +34,21 @@ class Onedrive
         $provider = new Microsoft([
             'clientId'          => $this->appKey,
             'clientSecret'      => $this->appSecret,
-            'redirectUri'       => $this->redirectUri
+            'redirectUri'       => $this->redirectUri,
         ]);
+
+        $options = [
+            'scope' => array_merge(
+                $provider->defaultScopes,
+                ['files.readwrite', 'offline_access']
+            ),
+        ];
 
         if (!isset($_GET['code'])) {
 
             // If we don't have an authorization code then get one
-            $authUrl = $provider->getAuthorizationUrl();
+            $authUrl = $provider->getAuthorizationUrl($options);
+
             // dd($authUrl);
             $_SESSION['oauth2state'] = $provider->getState();
             header('Location: '. $authUrl);
@@ -54,10 +62,12 @@ class Onedrive
 
         } else {
 
-            // // Try to get an access token (using the authorization code grant)
-            // $token = $provider->getAccessToken('authorization_code', [
-            //     'code' => $_GET['code']
-            // ]);
+            // Try to get an access token (using the authorization code grant)
+            $token = $provider->getAccessToken('authorization_code', [
+                 'code' => $_GET['code']
+            ]);
+
+            dd($token);
 
             // // Optional: Now you have a token you can look up a users profile data
             // try {
@@ -75,7 +85,7 @@ class Onedrive
             // }
 
             // Use this to interact with an API on the users behalf
-            return $request->all();
+            // return $request->all();
         }
 
     }
