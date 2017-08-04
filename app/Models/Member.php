@@ -14,7 +14,7 @@ class Member extends Model implements AuthenticatableContract, AuthorizableContr
 
     protected $table = 'members';
 
-    protected $hidden = ['password'];
+    protected $hidden = ['password', 'code'];
 
 
     public function uploads()
@@ -25,6 +25,16 @@ class Member extends Model implements AuthenticatableContract, AuthorizableContr
     public function directories()
     {
         return $this->hasMany('App\Models\Directory', 'member_id', 'id');
+    }
+
+    public function scopeActive($q)
+    {
+        return $q->where('is_active', 1);
+    }
+
+    public function scopeInactive($q)
+    {
+        return $q->where('is_active', 0);
     }
 
 }
