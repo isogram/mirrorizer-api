@@ -73,6 +73,8 @@ $app->group(['prefix' => 'auth'], function () use ($app) {
 $app->group(['prefix' => 'members'], function () use ($app) {
 
     $app->post('register', 'MemberController@postRegister');
+
+    $app->get('verify/{code}', ['as' => 'members.verify', 'uses' => 'MemberController@getVerify']);
     
     $app->post('login', 'MemberController@postLogin');
 

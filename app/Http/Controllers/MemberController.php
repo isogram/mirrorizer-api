@@ -19,6 +19,9 @@ use App\Constant;
 class MemberController extends Controller
 {
 
+    const MSG_VERIFY_SUCCESS = 'Success to verify user!';
+    const MSG_VERIFY_FAILED  = 'No user verified!';
+
     /**
      * Create a new controller instance.
      *
@@ -27,7 +30,6 @@ class MemberController extends Controller
     public function __construct()
     {
         parent::__construct();
-
     }
 
     /**
@@ -69,6 +71,8 @@ class MemberController extends Controller
         $member->username   = $request->get('username');
         $member->password   = $hash->make($request->get('password'));
         $member->email      = $request->get('email');
+        $member->is_active  = 0;
+        $member->code       = $this->generateCode($member->email);
 
         // save new member
         if ($member->save()) {
@@ -76,8 +80,17 @@ class MemberController extends Controller
             $newMember = [
                 'id'        => $member->id,
                 'username'  => $member->username,
-                'email'     => $member->email
+                'email'     => $member->email,
+                'is_active' => $member->is_active
             ];
+
+            $activationLink = $this->generateActivationLink($member->code);
+
+            Mail::send(['emails.register-html', 'emails.register-raw'], ['member' => $member, 'activationLink' => $activationLink], function ($m) use ($member) {
+
+                $m->to($member->email, $member->username)->subject('Welcome to Mirrorizer!');
+
+            });
 
             return response( $this->responseData( $newMember, false, Constant::SUCCESS_TO_CREATE_USER ) );
 
@@ -120,7 +133,7 @@ class MemberController extends Controller
         }
 
         // find member in db
-        $member = Member::where('email', $request->get('email'))->first();
+        $member = Member::where('email', $request->get('email'))->active()->first();
 
         if ($member) {
 
@@ -301,6 +314,52 @@ class MemberController extends Controller
 
         }
 
+    }
+
+    /**
+     * Handle user verification
+     * 
+     * @param string $code 
+     * @param Request $request 
+     * @return string
+     */
+    public function getVerify($code, Request $request)
+    {
+
+        $member = Member::where('code', $code)->inactive()->first();
+
+        if (!$member)
+            return self::MSG_VERIFY_FAILED;
+
+        $member->is_active = 1;
+
+        if ($member->save()) {
+            return self::MSG_VERIFY_SUCCESS;
+        }
+
+    }
+
+    /**
+     * Genarate verification code for user
+     * 
+     * @param string $string 
+     * @return string
+     */
+    protected function generateCode($string)
+    {
+        return md5( time() . $string );
+    }
+
+    /**
+     * Generate verification link for user
+     * 
+     * @param string $code 
+     * @return string
+     */
+    protected function generateActivationLink($code)
+    {
+        $params = ['code' => $code];
+        return route('members.verify' , $params);
     }
 
 }
