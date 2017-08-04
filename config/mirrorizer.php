@@ -20,7 +20,8 @@ return [
     'dropbox_app_secret'           => env('DROPBOX_APP_SECRET', 'r4ucym6sbqytwsc'),
     'dropbox_access_token'         => env('DROPBOX_ACCESS_TOKEN', 'cv_D_uHdp1AAAAAAAAAACcD68Lti4cBNZgOty4JLDPnxud1XMnydKYOZYpBjAKiz'),
 
-    'onedrive_app_key'             => env('ONEDRIVE_APP_KEY', '4746b654-3587-474d-a4cb-f27d18e7d46a'),
-    'onedrive_app_secret'          => env('ONEDRIVE_APP_SECRET', '8FBC6EBBC77DF36F4DD6E744D9C4811FA4E36552'),
+    'onedrive_app_key'             => env('ONEDRIVE_APP_KEY', '8df43010-b4f9-4d38-a9d2-50483c821024'),
+    'onedrive_app_secret'          => env('ONEDRIVE_APP_SECRET', 'tocnWCoAwOfFPrpqvnbVeEz'),
     'onedrive_redirect_uri'        => env('ONEDRIVE_REDIRECT_URI', 'https://isogram.tk:8092/auth/microsoft'),
+    'onedrive_credentials_path'    => __DIR__ . '/microsoft/credentials.json',
 ];

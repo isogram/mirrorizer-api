@@ -4,6 +4,8 @@ namespace App\Tools;
 
 use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
 
+use Illuminate\Http\Request;
+
 /**
 * Onedrive Class
 */
@@ -14,6 +16,8 @@ class Onedrive
     protected $appSecret;
     protected $app;
     protected $redirectUri;
+    protected $redirectUriLogout;
+    protected $credentialsPath;
 
     const DROPBOX_PATH = '/UPLOADED';
 
@@ -22,9 +26,11 @@ class Onedrive
         $this->appKey = config('mirrorizer.onedrive_app_key');
         $this->appSecret = config('mirrorizer.onedrive_app_secret');
         $this->redirectUri = config('mirrorizer.onedrive_redirect_uri');
+        $this->redirectUriLogout = config('mirrorizer.onedrive_redirect_uri_logout');
+        $this->credentialsPath = config('mirrorizer.onedrive_credentials_path');
     }
 
-    public function generateCredentials()
+    public function generateCredentials(Request $request)
     {
 
         $provider = new Microsoft([
@@ -33,52 +39,55 @@ class Onedrive
             'redirectUri'       => $this->redirectUri,
         ]);
 
+        $options = [
+            'scope' => array_merge(
+                $provider->defaultScopes,
+                ['files.readwrite', 'offline_access']
+            ),
+        ];
+
         if (!isset($_GET['code'])) {
 
             // If we don't have an authorization code then get one
-            $options = [
-                'scope' => ['files.readwrite.all', 'offline_access'], // array or string,
-                'response_type' => 'token'
-            ];
-
             $authUrl = $provider->getAuthorizationUrl($options);
+
             // dd($authUrl);
             $_SESSION['oauth2state'] = $provider->getState();
-            header('Location: '.$authUrl);
+            header('Location: '. $authUrl);
             exit;
 
         // Check given state against previously stored one to mitigate CSRF attack
-        } elseif (empty($_GET['state']) || ($_GET['state'] !== $_SESSION['oauth2state'])) {
+        } elseif (empty($_GET['state']) || (isset($_SESSION['oauth2state']) && $_GET['state'] !== $_SESSION['oauth2state'])) {
 
-            unset($_SESSION['oauth2state']);
+            // unset($_SESSION['oauth2state']);
             exit('Invalid state');
 
         } else {
 
             // Try to get an access token (using the authorization code grant)
             $token = $provider->getAccessToken('authorization_code', [
-                'code' => $_GET['code']
+                 'code' => $_GET['code']
             ]);
 
-            // Optional: Now you have a token you can look up a users profile data
             try {
 
-                // We got an access token, let's now get the user's details
-                $user = $provider->getResourceOwner($token);
-
-                // Use these details to create a new profile
-                printf('Hello %s!', $user->getFirstname());
+                file_put_contents($this->credentialsPath, json_encode($token));
 
             } catch (Exception $e) {
 
-                // Failed to get user details
-                exit('Oh dear...');
+                return $e->getMessage();
+
             }
 
-            // Use this to interact with an API on the users behalf
-            return $token->getToken();
+            return true;
+
         }
 
+    }
+
+    public function logout()
+    {
+        # code...
     }
 
     // /**

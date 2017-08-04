@@ -17,7 +17,13 @@ use App\Tools\Onedrive;
 
 $app->get('/', function () use ($app) {
 
-    return $app->version();
+    $responseData = [
+        'error'         => false,
+        'message'       => 'Hello :)',
+        'result'        => null
+    ];
+
+    return response($responseData);
 
 });
 
