@@ -16,6 +16,20 @@ class Upload extends Model
 
     protected $perPage = 100;
 
+    protected $appends = ['name'];
+    protected $hidden = ['filename'];
+
+    public function getNameAttribute($value)
+    {
+        return $this->attributes['name'] = $this->attributes['filename'];
+    }
+
+    public function getInfoAttribute($value)
+    {
+        $json = json_decode($value);
+        return $this->attributes['info'] = !is_null($json) ? $json : [];
+    }
+
     public function member()
     {
         return $this->belongsTo('App\Models\Member', 'member_id');

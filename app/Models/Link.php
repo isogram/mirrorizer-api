@@ -12,6 +12,8 @@ class Link extends Model
 
     protected $casts = [
         'upload_id' => 'integer',
+        'url' => 'string',
+        'json_response' => 'string',
     ];
 
     public function upload()
