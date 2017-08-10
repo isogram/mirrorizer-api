@@ -107,3 +107,10 @@ $app->group(['prefix' => 'directory', 'middleware' => 'auth'], function () use (
     $app->post('/{folder_id}', 'DirectoryController@postEdit');
 
 });
+
+// list
+$app->group(['prefix' => 'lists', 'middleware' => 'auth'], function () use ($app) {
+
+    $app->get('/', 'ListsController@getIndex');
+
+});
