@@ -98,7 +98,9 @@ class DirectoryController extends Controller
         
         }
 
-        $resp = $this->responseData($dir, false, Constant::SUCCESS_TO_CREATE_ITEM);
+        $json = $this->resultItem($dir, 'dir');
+
+        $resp = $this->responseData($json, false, Constant::SUCCESS_TO_CREATE_ITEM);
 
         return response($resp);
     }

@@ -173,7 +173,9 @@ class UploadController extends Controller
 
             }
 
-            return response( $this->responseData($upload, false, Constant::SUCCESS_TO_CREATE_ITEM) );
+            $json = $this->resultItem($upload, 'file');
+
+            return response( $this->responseData($json, false, Constant::SUCCESS_TO_CREATE_ITEM) );
 
         }
     }
