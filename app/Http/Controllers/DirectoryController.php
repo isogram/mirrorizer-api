@@ -59,6 +59,24 @@ class DirectoryController extends Controller
         return response($resp);
     }
 
+    public function delete(Request $request, $folderID)
+    {
+        $member = Auth::user();
+
+        // check folderID exsitance
+        $dir = Directory::where('id', $folderID)->where('member_id', $member->id)->first();
+
+        if (!$dir) {
+            return response($this->responseData([], self::MSG_FOLDER_NOT_FOUND, Constant::FAILED_VALIDATION) , 422);
+        }
+
+        $dir->delete();
+
+        $resp = $this->responseData($dir, false, Constant::SUCCESS_TO_DELETE_ITEM);
+
+        return response($resp);
+    }
+
     public function postNew(Request $request)
     {
         $member = Auth::user();

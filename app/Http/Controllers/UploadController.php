@@ -62,6 +62,24 @@ class UploadController extends Controller
         return response($resp);
     }
 
+    public function delete(Request $request, $fileID)
+    {
+        $member = Auth::user();
+
+        // check fileID exsitance
+        $file = Upload::where('id', $fileID)->where('member_id', $member->id)->first();
+
+        if (!$file) {
+            return response($this->responseData([], self::MSG_FILE_NOT_FOUND, Constant::FAILED_VALIDATION) , 422);
+        }
+
+        $file->delete();
+
+        $resp = $this->responseData($file, false, Constant::SUCCESS_TO_DELETE_ITEM);
+
+        return response($resp);
+    }
+
     public function postNew(Request $request)
     {
         // get used mirrorizer provider
