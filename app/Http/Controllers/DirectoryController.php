@@ -30,13 +30,32 @@ class DirectoryController extends Controller
 
     }
 
+    protected function directoryColumns()
+    {
+        return [
+            'id',
+            DB::raw('id as directory_id'),
+            'parent_id',
+            'member_id',
+            'name',
+            'created_at',
+            'updated_at',
+        ];
+    }
+
     public function getIndex(Request $request)
     {
         $member = Auth::user();
 
         $parentID = $request->get('parent_id', 0);
 
-        $dirs = $member->directories()->where('parent_id', $parentID)->paginate();
+        $dirs = $member
+                ->directories()
+                ->where('parent_id', $parentID)
+                ->select(
+                    $this->directoryColumns()
+                )
+                ->paginate();
 
         $resp = $this->responseData($dirs, false, Constant::SUCCESS_TO_FETCH_ITEM);
 
@@ -48,13 +67,20 @@ class DirectoryController extends Controller
         $member = Auth::user();
 
         // check folderID exsitance
-        $dir = Directory::where('id', $folderID)->where('member_id', $member->id)->first();
+        $dir = Directory::where('id', $folderID)
+                ->where('member_id', $member->id)
+                ->select(
+                    $this->directoryColumns()
+                )
+                ->first();
 
         if (!$dir) {
             return response($this->responseData([], self::MSG_FOLDER_NOT_FOUND, Constant::FAILED_VALIDATION) , 422);
         }
 
-        $resp = $this->responseData($dir, false, Constant::SUCCESS_TO_FETCH_ITEM);
+        $json = $this->resultItem($dir, 'dir');
+
+        $resp = $this->responseData($json, false, Constant::SUCCESS_TO_FETCH_ITEM);
 
         return response($resp);
     }
@@ -72,7 +98,9 @@ class DirectoryController extends Controller
 
         $dir->delete();
 
-        $resp = $this->responseData($dir, false, Constant::SUCCESS_TO_DELETE_ITEM);
+        $json = $this->resultItem($dir, 'dir');
+
+        $resp = $this->responseData($json, false, Constant::SUCCESS_TO_DELETE_ITEM);
 
         return response($resp);
     }
@@ -169,7 +197,9 @@ class DirectoryController extends Controller
         
         }
 
-        $resp = $this->responseData($dir, false, Constant::SUCCESS_TO_UPDATE_ITEM);
+        $json = $this->resultItem($dir, 'dir');
+
+        $resp = $this->responseData($json, false, Constant::SUCCESS_TO_UPDATE_ITEM);
 
         return response($resp);
     }
