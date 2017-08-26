@@ -57,7 +57,9 @@ class UploadController extends Controller
             return response($this->responseData([], self::MSG_FILE_NOT_FOUND, Constant::FAILED_VALIDATION) , 422);
         }
 
-        $resp = $this->responseData($file, false, Constant::SUCCESS_TO_FETCH_ITEM);
+        $json = $this->resultItem($file, 'file');
+
+        $resp = $this->responseData($json, false, Constant::SUCCESS_TO_FETCH_ITEM);
 
         return response($resp);
     }
@@ -75,7 +77,9 @@ class UploadController extends Controller
 
         $file->delete();
 
-        $resp = $this->responseData($file, false, Constant::SUCCESS_TO_DELETE_ITEM);
+        $json = $this->resultItem($file, 'file');
+
+        $resp = $this->responseData($json, false, Constant::SUCCESS_TO_DELETE_ITEM);
 
         return response($resp);
     }
@@ -244,7 +248,9 @@ class UploadController extends Controller
         
         }
 
-        $resp = $this->responseData($file, false, Constant::SUCCESS_TO_UPDATE_ITEM);
+        $json = $this->resultItem($file, 'file');
+
+        $resp = $this->responseData($json, false, Constant::SUCCESS_TO_UPDATE_ITEM);
 
         return response($resp);
     }
