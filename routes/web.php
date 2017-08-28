@@ -46,15 +46,12 @@ $app->group(['prefix' => 'sample'], function() use ($app) {
 
             case 'onedrive':
                 $uploader = new Onedrive;
-                $uploader->generateCredentials();
-                die;
                 break;
             
             default:
                 return response("WRONG TYPE");
                 break;
         }
-
         $response = $uploader->upload($file, $name);
 
         return response($response);
