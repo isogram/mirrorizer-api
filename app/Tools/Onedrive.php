@@ -4,6 +4,11 @@ namespace App\Tools;
 
 use Stevenmaguire\OAuth2\Client\Provider\Microsoft;
 
+use Kunnu\OneDrive\Client;
+use GuzzleHttp\Client as Guzzle;
+use GuzzleHttp\Exception\ClientException;
+use League\OAuth2\Client\Token\AccessToken;
+
 use Illuminate\Http\Request;
 
 /**
@@ -18,8 +23,10 @@ class Onedrive
     protected $redirectUri;
     protected $redirectUriLogout;
     protected $credentialsPath;
+    protected $provider;
+    protected $client;
 
-    const DROPBOX_PATH = '/UPLOADED';
+    const FOLDER_ID = 'F5BE5C4B17A7DF0A%21105';
 
     function __construct()
     {
@@ -28,10 +35,7 @@ class Onedrive
         $this->redirectUri = config('mirrorizer.onedrive_redirect_uri');
         $this->redirectUriLogout = config('mirrorizer.onedrive_redirect_uri_logout');
         $this->credentialsPath = config('mirrorizer.onedrive_credentials_path');
-    }
 
-    public function generateCredentials(Request $request)
-    {
 
         $provider = new Microsoft([
             'clientId'          => $this->appKey,
@@ -46,13 +50,19 @@ class Onedrive
             ),
         ];
 
+        $this->provider = $provider;
+    }
+
+    public function generateCredentials(Request $request)
+    {
+
         if (!isset($_GET['code'])) {
 
             // If we don't have an authorization code then get one
-            $authUrl = $provider->getAuthorizationUrl($options);
+            $authUrl = $this->provider->getAuthorizationUrl($options);
 
             // dd($authUrl);
-            $_SESSION['oauth2state'] = $provider->getState();
+            $_SESSION['oauth2state'] = $this->provider->getState();
             header('Location: '. $authUrl);
             exit;
 
@@ -65,7 +75,7 @@ class Onedrive
         } else {
 
             // Try to get an access token (using the authorization code grant)
-            $token = $provider->getAccessToken('authorization_code', [
+            $token = $this->provider->getAccessToken('authorization_code', [
                  'code' => $_GET['code']
             ]);
 
@@ -85,135 +95,106 @@ class Onedrive
 
     }
 
-    public function logout()
+    protected function refreshToken($oldCredentials)
     {
-        # code...
+
+        try {
+
+            $newAccessToken = $this->provider->getAccessToken('refresh_token', [
+                'refresh_token' => $oldCredentials->getRefreshToken()
+            ]);
+
+            file_put_contents($this->credentialsPath, json_encode($newAccessToken));
+
+        } catch (Exception $e) {
+
+            return $e->getMessage();
+
+        }
+
+        return $newAccessToken;
     }
 
-    // /**
-    //  * Upload file to Dropbox
-    //  * @param string $fullPath Full path of file
-    //  * @param string $fileName Name of file
-    //  * @return void
-    //  */
-    // public function upload($fullPath, $fileName)
-    // {
-    //     $resp = [
-    //         'error' => null,
-    //         'data' => null,
-    //         'permission' => null,
-    //     ];
+    protected function setupClient($token)
+    {
+        //Create a Guzzle Client
+        $guzzle = new Guzzle;
 
-    //     // set dropbox file
-    //     $this->setDropboxFile($fullPath);
+        //Initialize the OneDrive Client
+        $this->client = new Client($token, $guzzle);
 
-    //     try {
+        return $this->client;
+    }
 
-    //         // upload to dropbox
-    //         $file = $this->dropbox->upload($this->getDropboxFile(), static::DROPBOX_PATH . '/' . $fileName, ['autorename' => true]);
-    //         $resp['data'] = $file->getData();
+    /**
+     * Upload file to OneDrive
+     * @param string $fullPath Full path of file
+     * @param string $fileName Name of file
+     * @return void
+     */
+    public function upload($fullPath, $fileName)
+    {
+        $resp = [
+            'error' => null,
+            'data' => null,
+            'permission' => null,
+        ];
 
-    //     } catch (\Exception $e) {
+        $credentials = json_decode(file_get_contents($this->credentialsPath), true);
 
-    //         $resp['error'] = 'Error when uploading to Dropbox';
-    //         return $resp;
+        if (is_null($credentials))
+            throw new \Exception("Credentials not found!", 1);
 
-    //     }
+        $token = new AccessToken($credentials);
 
-    //     // uploaded file
-    //     $uploadedFilePath = $file->path_display;
+        // Token expired. Get new token
+        if ($token->hasExpired()) {
+            $token = $this->refreshToken($token);
+        }
 
-    //     // set permission to public
-    //     $permission = $this->setPermissionToPublic($uploadedFilePath);
+        // setup $this->client
+        $this->setupClient($token->getToken());
 
-    //     if ($permission instanceof \Exception) {
-    //         // error here
-    //         // decode json string
-    //         $errs = json_decode($permission->getMessage(), true);
-    //         if ($errs) {
-    //             if (isset($errs['error']['.tag']) && $errs['error']['.tag'] == 'shared_link_already_exists') {
-    //                 // pass it .. this is not necessary error
+        try {
 
-    //                 $links = $this->getSharedLinks($uploadedFilePath);
-
-    //                 if ($links instanceof \Exception) {
-
-    //                     $resp['error'] = 'Error when get shared links';
-    //                     return $resp;
-
-    //                 } else {
-
-    //                     $resp['permission'] = $links->getDecodedBody()['links'][0];
-
-    //                 }
-
-    //             } else {
-
-    //                 $resp['error'] = 'Error when set permission';
-    //                 return $resp;
-
-    //             }
-    //         }
-    //     } else {
-
-    //         $resp['permission'] = $permission->getDecodedBody();
-
-    //     }
-
-
-    //     return $resp;
-    // }
-
-    // private function setDropboxFile($fullPath)
-    // {
-    //     $this->dropboxFile = new KannuDropboxFile($fullPath);
-    // }
-
-    // private function getDropboxFile()
-    // {
-    //     return $this->dropboxFile;
-    // }
-
-    // private function setPermissionToPublic($filePath)
-    // {
-
-    //     try {
+            $file = $this->client->uploadFile($fullPath , $fileName, static::FOLDER_ID);
+            $resp['data'] = $file;
     
-    //         $response =  $this->dropbox->postToAPI(
-    //             "/sharing/create_shared_link_with_settings",
-    //             [
-    //                 "path" => $filePath,
-    //                 "settings" => ['requested_visibility' => 'public']
-    //             ]
-    //         );
-            
-    //     } catch (\Exception $e) {
+        } catch (\Exception $e) {
 
-    //         return $e;
+            $resp['error'] = 'Error when uploading to OneDrive ' . $e->getMessage();
+            return $resp;  
 
-    //     }
+        }
 
-    //     return $response;
-    // }
+        // set permission to public
+        $permission = $this->setPermissionToPublic($file->id);
 
-    // private function getSharedLinks($filePath)
-    // {
+        if ($permission instanceof \Exception) {
 
-    //     try {
+            $resp['error'] = 'Error when set permission';
+            return $resp;
+
+        } else {
+
+            $resp['permission'] = $permission;
+
+        }
+
+
+        return $resp;
+    }
+
+    private function setPermissionToPublic($id)
+    {
+        try {
     
-    //         $response =  $this->dropbox->postToAPI(
-    //             "/sharing/get_shared_links",
-    //             [
-    //                 "path" => $filePath
-    //             ]
-    //         );
-            
-    //     } catch (\Exception $e) {
+            return $this->client->createShareLink($id, 'view');
+    
+        } catch (\Exception $e) {
 
-    //         return $e;
+            return $e;
 
-    //     }
-
-    //     return $response;
-    // }
+        }
+    }
 }
