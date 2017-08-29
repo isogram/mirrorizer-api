@@ -154,7 +154,7 @@ class UploadController extends Controller
             try {            
 
                 // move the file
-                $theFile = time() . '_' . $strID . '_' . $fileName;
+                $theFile = $strID . '_' . $fileName;
                 $file->move($destinationPath, $theFile);
 
             } catch (\Exception $e) {
@@ -187,7 +187,9 @@ class UploadController extends Controller
 
                 // mirrorize here
                 // put jobs into queue to mirroring files
-                dispatch(new MirrorizerJob($upload));
+                foreach ($providers as $provider) {
+                    dispatch(new MirrorizerJob($upload, $provider));
+                }
 
             } catch (\Exception $e) {
 
