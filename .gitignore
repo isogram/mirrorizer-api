@@ -1,3 +1,7 @@
 /vendor
 .env
 composer.lock
+
+config/google/client-secret.json
+config/google/google-drive.json
+config/microsoft/credentials.json
