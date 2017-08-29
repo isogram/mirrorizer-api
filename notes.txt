@@ -103,3 +103,76 @@
 # Google Drive Direct Download
 # -----------------------------
 https://drive.google.com/uc?id=FILE_ID
+
+# -----------------------------
+# Onedrive Success Response
+# -----------------------------
+{
+    "data": {
+        "@content.downloadUrl": "https://ijo5mw.dm2302.livefilestore.com/y4pYflDIOJfu3uQaff4oMYGyTEQzZ3sZCYn0THCl6Xpqkz6p-cj1eCpUVAzhQswWrjjf3F2AoVBY6e0YGnw5tkri6UjyRc_uSThzJtUMrVLG_XUaZTinxeTmP7hpd9Agn99j_3007V-QktIJ0Z8VArGXCJkYrf1coPpvM_zqkzvFPQJPHa6l0wj8SIKvz7dTdBMYT0B18dH5ncSS4pS-MId4v0FZjn3scC5xBq-M1GEaT0",
+        "@odata.context": "https://api.onedrive.com/v1.0/$metadata#drives('me')/items('F5BE5C4B17A7DF0A%2521105')/children/$entity",
+        "cTag": "aYzpGNUJFNUM0QjE3QTdERjBBITExNS4yNTc",
+        "createdBy": {
+            "application": {
+                "displayName": "Mirrorizer",
+                "id": "401de507"
+            },
+            "user": {
+                "displayName": "Muhamm Shidiq",
+                "id": "f5be5c4b17a7df0a"
+            }
+        },
+        "createdDateTime": "2017-08-29T10:20:53.43Z",
+        "eTag": "aRjVCRTVDNEIxN0E3REYwQSExMTUuMA",
+        "file": {
+            "hashes": {
+                "sha1Hash": "5B59BF61DFB86F07FC95C938AA7C0FFCCBF93BBD"
+            },
+            "mimeType": "image/jpeg",
+            "processingMetadata": true
+        },
+        "fileSystemInfo": {
+            "createdDateTime": "2017-08-29T10:20:53.43Z",
+            "lastModifiedDateTime": "2017-08-29T10:20:53.43Z"
+        },
+        "id": "F5BE5C4B17A7DF0A!115",
+        "lastModifiedBy": {
+            "application": {
+                "displayName": "Mirrorizer",
+                "id": "401de507"
+            },
+            "user": {
+                "displayName": "Muhamm Shidiq",
+                "id": "f5be5c4b17a7df0a"
+            }
+        },
+        "lastModifiedDateTime": "2017-08-29T10:20:53.43Z",
+        "name": "file.jpg",
+        "parentReference": {
+            "driveId": "f5be5c4b17a7df0a",
+            "id": "F5BE5C4B17A7DF0A!105",
+            "name": "UPLOADED",
+            "path": "/drive/root:/UPLOADED"
+        },
+        "size": 170695,
+        "webUrl": "https://1drv.ms/i/s!AArfpxdLXL71cw"
+    },
+    "error": null,
+    "permission": {
+        "@odata.context": "https://api.onedrive.com/v1.0/$metadata#drives('me')/items('F5BE5C4B17A7DF0A%21115')/permissions/$entity",
+        "expirationDateTime": "0001-01-01T00:00:00Z",
+        "hasPassword": false,
+        "id": "H1VnJyPqlq4rWF-7jUG_XhwSen8",
+        "link": {
+            "application": {
+                "id": "401de507"
+            },
+            "type": "view",
+            "webUrl": "https://1drv.ms/u/s!AgrfpxdLXL71c68sqWnOTzpDtzw"
+        },
+        "roles": [
+            "read"
+        ],
+        "shareId": "s!AgrfpxdLXL71c68sqWnOTzpDtzw"
+    }
+}

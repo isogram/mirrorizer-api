@@ -144,7 +144,8 @@ class MemberController extends Controller
             if ($isMatched) {
 
                 $resp = [
-                    'token' => encrypt($member->id)
+                    'token' => encrypt($member->id),
+                    'user' => $member
                 ];
 
                 return response( $this->responseData( $resp, false, Constant::SUCCESS_LOGIN) );

@@ -14,6 +14,7 @@ class Constant
     const SERVER_ERROR                  = 'Internal Error';
     const SUCCESS_TO_CREATE_ITEM        = 'Success to create item';
     const SUCCESS_TO_UPDATE_ITEM        = 'Success to update item';
+    const SUCCESS_TO_DELETE_ITEM        = 'Success to delete item';
     const FAILED_TO_PROCESS             = 'Failed to process request';
 
     // users

@@ -57,7 +57,29 @@ class UploadController extends Controller
             return response($this->responseData([], self::MSG_FILE_NOT_FOUND, Constant::FAILED_VALIDATION) , 422);
         }
 
-        $resp = $this->responseData($file, false, Constant::SUCCESS_TO_FETCH_ITEM);
+        $json = $this->resultItem($file, 'file');
+
+        $resp = $this->responseData($json, false, Constant::SUCCESS_TO_FETCH_ITEM);
+
+        return response($resp);
+    }
+
+    public function delete(Request $request, $fileID)
+    {
+        $member = Auth::user();
+
+        // check fileID exsitance
+        $file = Upload::where('id', $fileID)->where('member_id', $member->id)->first();
+
+        if (!$file) {
+            return response($this->responseData([], self::MSG_FILE_NOT_FOUND, Constant::FAILED_VALIDATION) , 422);
+        }
+
+        $file->delete();
+
+        $json = $this->resultItem($file, 'file');
+
+        $resp = $this->responseData($json, false, Constant::SUCCESS_TO_DELETE_ITEM);
 
         return response($resp);
     }
@@ -132,7 +154,7 @@ class UploadController extends Controller
             try {            
 
                 // move the file
-                $theFile = time() . '_' . $strID . '_' . $fileName;
+                $theFile = $strID . '_' . $fileName;
                 $file->move($destinationPath, $theFile);
 
             } catch (\Exception $e) {
@@ -165,7 +187,9 @@ class UploadController extends Controller
 
                 // mirrorize here
                 // put jobs into queue to mirroring files
-                dispatch(new MirrorizerJob($upload));
+                foreach ($providers as $provider) {
+                    dispatch(new MirrorizerJob($upload, $provider));
+                }
 
             } catch (\Exception $e) {
 
@@ -173,7 +197,9 @@ class UploadController extends Controller
 
             }
 
-            return response( $this->responseData($upload, false, Constant::SUCCESS_TO_CREATE_ITEM) );
+            $json = $this->resultItem($upload, 'file');
+
+            return response( $this->responseData($json, false, Constant::SUCCESS_TO_CREATE_ITEM) );
 
         }
     }
@@ -224,7 +250,9 @@ class UploadController extends Controller
         
         }
 
-        $resp = $this->responseData($file, false, Constant::SUCCESS_TO_UPDATE_ITEM);
+        $json = $this->resultItem($file, 'file');
+
+        $resp = $this->responseData($json, false, Constant::SUCCESS_TO_UPDATE_ITEM);
 
         return response($resp);
     }

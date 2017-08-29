@@ -46,15 +46,12 @@ $app->group(['prefix' => 'sample'], function() use ($app) {
 
             case 'onedrive':
                 $uploader = new Onedrive;
-                $uploader->generateCredentials();
-                die;
                 break;
             
             default:
                 return response("WRONG TYPE");
                 break;
         }
-
         $response = $uploader->upload($file, $name);
 
         return response($response);
@@ -95,6 +92,8 @@ $app->group(['prefix' => 'uploads', 'middleware' => 'auth'], function () use ($a
     $app->get('/{upload_id}', 'UploadController@getDetail');
     $app->post('/{upload_id}', 'UploadController@postEdit');
 
+    $app->delete('/{folder_id}', 'UploadController@delete');
+
 });
 
 // directory
@@ -105,5 +104,14 @@ $app->group(['prefix' => 'directory', 'middleware' => 'auth'], function () use (
 
     $app->get('/{folder_id}', 'DirectoryController@getDetail');
     $app->post('/{folder_id}', 'DirectoryController@postEdit');
+
+    $app->delete('/{folder_id}', 'DirectoryController@delete');
+
+});
+
+// list
+$app->group(['prefix' => 'lists', 'middleware' => 'auth'], function () use ($app) {
+
+    $app->get('/', 'ListsController@getIndex');
 
 });

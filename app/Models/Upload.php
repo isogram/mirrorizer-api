@@ -2,10 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Upload extends Model
 {
+
+    use SoftDeletes;
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
 
     protected $table = 'uploads';
 
@@ -15,6 +25,20 @@ class Upload extends Model
     ];
 
     protected $perPage = 100;
+
+    protected $appends = ['name'];
+    protected $hidden = ['filename'];
+
+    public function getNameAttribute($value)
+    {
+        return $this->attributes['name'] = $this->attributes['filename'];
+    }
+
+    public function getInfoAttribute($value)
+    {
+        $json = json_decode($value);
+        return $this->attributes['info'] = !is_null($json) ? $json : [];
+    }
 
     public function member()
     {
