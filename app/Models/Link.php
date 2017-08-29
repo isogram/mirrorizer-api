@@ -16,6 +16,12 @@ class Link extends Model
         'json_response' => 'string',
     ];
 
+    public function getJsonResponseAttribute($value)
+    {
+        $json = json_decode($value);
+        return $this->attributes['json_response'] = !is_null($json) ? $json : "";
+    }
+
     public function upload()
     {
         return $this->belongsTo('App\Models\Upload', 'upload_id');
